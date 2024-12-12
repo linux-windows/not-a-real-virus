@@ -1,47 +1,54 @@
 import tkinter as tk
 from tkinter import messagebox
-import random
 
-def show_final_warning():
-    """Display the prank warning about deleting the hard drive."""
-    response = messagebox.askyesno(
-        title="Warning",
-        message="Selecting 'OK' will erase the contents of the hard drive. Do you wish to proceed?"
-    )
-    if response:
-        messagebox.showinfo("Action", "This is a test. No data will be erased.")
-    else:
-        messagebox.showinfo("Action", "Proceeding... Just kidding! No data erased.")
+# Function to create the red screen
+def create_red_screen():
+    root = tk.Tk()
+    root.attributes("-fullscreen", True)  # Make it full screen
+    root.configure(bg='red')  # Set the background color to red
+    root.title("NO ESCAPE!!!")
 
-def show_no_escape():
-    """Display the 'NO ESCAPE!!!!' warning."""
-    messagebox.showerror("NO ESCAPE!!!!", "There is no way out! The end is near!")
-    root.after(2000, show_final_warning)  # Delay before showing the final warning
+    # Add a label to the screen for effect
+    label = tk.Label(root, text="NO ESCAPE!!!", font=("Helvetica", 40), fg="white", bg="red")
+    label.pack(expand=True)
 
-def change_background():
-    """Change the background to random shades of red."""
-    r = random.randint(100, 255)  # Random red intensity
-    color = f'#{r:02x}0000'  # Hex color format for shades of red
-    root.configure(background=color)
-    root.after(100, change_background)  # Change color every 100ms
+    # After 2 seconds, show the warning message with custom buttons
+    root.after(2000, show_warning, root)
 
-# Create the main application window
-root = tk.Tk()
+    root.mainloop()
 
-# Force fullscreen to cover everything, including taskbar
-root.attributes('-fullscreen', True)
+# Function to display the warning with custom buttons
+def show_warning(root):
+    # Hide the main window (red screen)
+    root.withdraw()
 
-# Hide the mouse cursor
-root.config(cursor="none")
+    # Create the warning window
+    top = tk.Toplevel(root)
+    top.title("Warning")
 
-# Remove Escape key functionality for exiting
-# root.bind('<Escape>', lambda e: None)
+    # Add the warning message
+    label = tk.Label(top, text="Selecting 'OK' will erase the contents of the hard drive. Do you wish to proceed?")
+    label.pack(pady=20)
 
-# Start changing the background colors
-root.after(500, change_background)
+    # Define the button actions
+    def proceed_action():
+        messagebox.showinfo("Proceeding", "Files will be deleted.")
+        top.destroy()
+        root.quit()  # Close the red screen after the warning
 
-# Show the "NO ESCAPE!!!!" warning after 2 seconds
-root.after(2000, show_no_escape)
+    def ok_action():
+        messagebox.showinfo("OK", "Proceeding with the deletion of files.")
+        top.destroy()
+        root.quit()  # Close the red screen after the warning
 
-# Start the main loop
-root.mainloop()
+    # Create the custom buttons
+    ok_button = tk.Button(top, text="OK", command=ok_action)
+    proceed_button = tk.Button(top, text="Proceed", command=proceed_action)
+
+    ok_button.pack(side="left", padx=10, pady=10)
+    proceed_button.pack(side="right", padx=10, pady=10)
+
+    top.mainloop()
+
+# Run the red screen and warning
+create_red_screen()
