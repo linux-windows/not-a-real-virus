@@ -1,0 +1,36 @@
+name: Build .exe using PyInstaller
+
+on:
+  push:
+    branches:
+      - main  # This triggers the action when code is pushed to the main branch
+  pull_request:
+    branches:
+      - main  # This triggers the action on a pull request to the main branch
+
+jobs:
+  build:
+    runs-on: windows-latest  # This specifies that the action will run on a Windows runner
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # This checks out your repository
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'  # You can set the Python version here (3.x will use the latest)
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller  # Install PyInstaller
+
+      - name: Build .exe file using PyInstaller
+        run: |
+          pyinstaller --onefile --noconsole prank_script.py  # Build the .exe
+
+      - name: Upload .exe file as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: prank-script-exe
+          path: dist/prank_script.exe  # This uploads the .exe file as an artifact
