@@ -1,19 +1,40 @@
 import tkinter as tk
 from tkinter import messagebox
 
-# Function to create the red screen
+# Function to create the red screen effect, filling from the corner
 def create_red_screen():
     root = tk.Tk()
     root.attributes("-fullscreen", True)  # Make it full screen
-    root.configure(bg='red')  # Set the background color to red
-    root.title("NO ESCAPE!!!")
+    root.configure(bg='white')  # Initially set the background to white
+    root.title("NO ESCAPE!!! Your computer will now die.")
 
-    # Add a label to the screen for effect
-    label = tk.Label(root, text="NO ESCAPE!!!", font=("Helvetica", 40), fg="white", bg="red")
-    label.pack(expand=True)
+    # Create a canvas to draw the red screen effect
+    canvas = tk.Canvas(root, width=root.winfo_screenwidth(), height=root.winfo_screenheight())
+    canvas.pack()
 
-    # After 2 seconds, show the warning message with custom buttons
-    root.after(2000, show_warning, root)
+    # Start with a small red rectangle in the top-left corner
+    rect_width = 1
+    rect_height = 1
+
+    # Function to gradually increase the size of the red rectangle
+    def expand_red():
+        nonlocal rect_width, rect_height
+        rect_width += 5  # Increase width by 5 pixels
+        rect_height += 5  # Increase height by 5 pixels
+
+        # Draw a red rectangle on the canvas
+        canvas.create_rectangle(0, 0, rect_width, rect_height, fill="red", outline="red")
+
+        # If the rectangle hasn't covered the entire screen, keep expanding
+        if rect_width < root.winfo_screenwidth() and rect_height < root.winfo_screenheight():
+            root.after(10, expand_red)  # Keep calling expand_red every 10ms
+
+        # Once the red screen is fully expanded, show the warning
+        else:
+            root.after(500, show_warning, root)
+
+    # Start the red expansion
+    expand_red()
 
     root.mainloop()
 
@@ -34,14 +55,13 @@ def show_warning(root):
     def proceed_action():
         messagebox.showinfo("Proceeding", "Files will be deleted.")
         top.destroy()
-        root.quit()  # Close the red screen after the warning
+
 
     def ok_action():
         messagebox.showinfo("OK", "Proceeding with the deletion of files.")
         top.destroy()
-        root.quit()  # Close the red screen after the warning
-
-    # Create the custom buttons
+       
+    # Create the custom buttons (No "Cancel" button)
     ok_button = tk.Button(top, text="OK", command=ok_action)
     proceed_button = tk.Button(top, text="Proceed", command=proceed_action)
 
