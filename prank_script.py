@@ -1,12 +1,13 @@
 import tkinter as tk
 from tkinter import messagebox
+import time
 
 # Function to create the red screen effect, filling from the corner
 def create_red_screen():
     root = tk.Tk()
     root.attributes("-fullscreen", True)  # Make it full screen
     root.configure(bg='white')  # Initially set the background to white
-    root.title("NO ESCAPE!!! Your computer will now die.")
+    root.title("NO ESCAPE!!!")
 
     # Create a canvas to draw the red screen effect
     canvas = tk.Canvas(root, width=root.winfo_screenwidth(), height=root.winfo_screenheight())
@@ -55,12 +56,15 @@ def show_warning(root):
     def proceed_action():
         messagebox.showinfo("Proceeding", "Files will be deleted.")
         top.destroy()
-
+        time.sleep(1000)
+        root.quit()  # Close the red screen after the warning
 
     def ok_action():
         messagebox.showinfo("OK", "Proceeding with the deletion of files.")
         top.destroy()
-       
+        time.sleep(1000)
+        root.quit()  # Close the red screen after the warning
+
     # Create the custom buttons (No "Cancel" button)
     ok_button = tk.Button(top, text="OK", command=ok_action)
     proceed_button = tk.Button(top, text="Proceed", command=proceed_action)
